@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ProductCell" rowHeight="100" id="q8j-VG-wdY" customClass="ProductTableViewCell" customModule="assignement" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="ProductCell" rowHeight="100" id="q8j-VG-wdY" customClass="ProductTableViewCell" customModule="assignement" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="375" height="100"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="q8j-VG-wdY" id="Fpp-4w-rzJ">
@@ -94,7 +94,11 @@
                     <navigationItem key="navigationItem" id="KUL-dI-o8Q">
                         <barButtonItem key="leftBarButtonItem" title="Logout" id="EhA-gJ-d77"/>
                         <rightBarButtonItems>
-                            <barButtonItem systemItem="search" id="pZd-iJ-VMG"/>
+                            <barButtonItem systemItem="search" id="pZd-iJ-VMG">
+                                <connections>
+                                    <action selector="searchButtonTapped:" destination="hva-Sp-w72" id="tm8-TB-n6D"/>
+                                </connections>
+                            </barButtonItem>
                             <barButtonItem title="Sort" id="1gF-NG-KMr"/>
                             <barButtonItem title="Filter" id="SVa-W0-fnn"/>
                         </rightBarButtonItems>
