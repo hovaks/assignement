@@ -42,12 +42,12 @@ class ProductTableViewCell: UITableViewCell {
 	
 	private func setup(with product: Product) {
 		
-		var baseURLString = "https://stdev-9df6.restdb.io/media/"
-		baseURLString += product.image.first!
+		var baseURLString = "http://142.93.143.76"
+		baseURLString += "/images/\(product.image)"
 		
 		self.productImageView?.imageFromServerURL(baseURLString)
 		nameLabel.text = product.name
-		categoryLabel.text = product.category.first?.name
+		categoryLabel.text = product.category.name
 		priceLabel.text = "\(product.price)$"
 	}
 

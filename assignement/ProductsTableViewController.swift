@@ -32,8 +32,16 @@ class ProductsTableViewController: UITableViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
+		let token = UserDefaults.standard.value(forKey: "accessToken") as? String
+		networkController = NetworkController(withToken: token)
+		networkController?.loadProducts(query: "", filters: filters, sortBy: sortValue) { results in 
+			if let results = results {
+				self.products = results
+			}
+		}
 		tableView.rowHeight = 100
 		
+		//Configure SearchBar
 		searchController = UISearchController(searchResultsController: nil)
 		searchController.searchResultsUpdater = self
 		searchController.searchBar.delegate = self
@@ -41,15 +49,11 @@ class ProductsTableViewController: UITableViewController {
 		searchController.dimsBackgroundDuringPresentation = false
 		navigationItem.searchController = searchController
 		definesPresentationContext = true
-		
-		
-		networkController = NetworkController()
-		
-		networkController?.loadProducts(query: "", filters: ["Books", "Music"], sortBy: .name) { results in
-			if let results = results {
-				self.products = results
-			}
-		}
+	}
+	@IBAction func logoutButtonTapped(_ sender: UIBarButtonItem) {
+		let defaults = UserDefaults.standard
+		defaults.set(nil, forKey: "accessToken")
+		self.dismiss(animated: false)
 	}
 	
 	@IBAction func searchButtonTapped(_ sender: UIBarButtonItem) {

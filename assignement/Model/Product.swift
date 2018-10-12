@@ -18,8 +18,8 @@ enum Sort: String {
 struct Product: Decodable {
 	let name: String
 	let price: Double
-	let image: [String]
-	let category: [Category]
+	let image: String
+	let category: Category
 }
 	
 	let imageCache = NSCache<NSString, UIImage>()
