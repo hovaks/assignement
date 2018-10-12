@@ -10,7 +10,11 @@ import UIKit
 
 class ProductsTableViewController: UITableViewController {
 	
-	var categories = [Category]()
+	var filters = [String]() {
+		didSet {
+			print(filters)
+		}
+	}
 	var products = [Product]() {
 		didSet {
 			tableView.reloadData()
@@ -36,11 +40,6 @@ class ProductsTableViewController: UITableViewController {
 		
 		
 		networkController = NetworkController()
-		networkController?.loadCategories { results in
-			if let results = results {
-				self.categories = results
-			}
-		}
 		
 		networkController?.loadProducts(query: "", filters: ["Books", "Music"], sortBy: .name) { results in
 			if let results = results {
@@ -48,7 +47,6 @@ class ProductsTableViewController: UITableViewController {
 			}
 		}
 	}
-	
 	
 	@IBAction func searchButtonTapped(_ sender: UIBarButtonItem) {
 		navigationItem.searchController?.isActive = true
@@ -70,6 +68,21 @@ class ProductsTableViewController: UITableViewController {
 		}
 		
 		return cell
+	}
+	
+	// MARK: - Navigation
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		//segue for the popover configuration window
+		if segue.identifier == "PopOver" {
+			if let controller = segue.destination as? FilterPopoverTableViewController {
+				let width = self.view.bounds.width
+				let height = self.view.bounds.height - self.view.bounds.height / 5
+				controller.popoverPresentationController!.delegate = self
+				controller.preferredContentSize = CGSize(width: width, height: height)
+				controller.filters = filters
+				controller.networkController = networkController
+			}
+		}
 	}
 }
 
@@ -95,6 +108,19 @@ extension ProductsTableViewController: UISearchResultsUpdating, UISearchBarDeleg
 				self.searchInProgress = false
 				self.products = results
 			}
+		}
+	}
+}
+
+extension ProductsTableViewController: UIPopoverPresentationControllerDelegate {
+	
+	func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+		return UIModalPresentationStyle.none
+	}
+	
+	func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) {
+		if let sender = popoverPresentationController.presentedViewController as? FilterPopoverTableViewController {
+			filters = sender.filters
 		}
 	}
 }

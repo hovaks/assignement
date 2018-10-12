@@ -100,7 +100,13 @@
                                 </connections>
                             </barButtonItem>
                             <barButtonItem title="Sort" id="1gF-NG-KMr"/>
-                            <barButtonItem title="Filter" id="SVa-W0-fnn"/>
+                            <barButtonItem title="Item" image="filter" id="SVa-W0-fnn">
+                                <connections>
+                                    <segue destination="GPF-0k-TzA" kind="popoverPresentation" identifier="PopOver" popoverAnchorBarButtonItem="SVa-W0-fnn" id="RKs-Ie-UFA">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
+                                </connections>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                 </tableViewController>
@@ -126,5 +132,45 @@
             </objects>
             <point key="canvasLocation" x="136.80000000000001" y="-564.46776611694156"/>
         </scene>
+        <!--Filter Popover Table View Controller-->
+        <scene sceneID="FLy-He-Jl5">
+            <objects>
+                <tableViewController id="GPF-0k-TzA" customClass="FilterPopoverTableViewController" customModule="assignement" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="txl-Wu-cyS">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="CategoryCell" textLabel="QZs-QM-8J3" rowHeight="44" style="IBUITableViewCellStyleDefault" id="qPT-is-FzX">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="qPT-is-FzX" id="rrA-kH-iXs">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="QZs-QM-8J3">
+                                            <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="GPF-0k-TzA" id="Lnq-RK-ubn"/>
+                            <outlet property="delegate" destination="GPF-0k-TzA" id="Pql-4v-ed2"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="16R-XW-YLJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1774" y="-564"/>
+        </scene>
     </scenes>
+    <resources>
+        <image name="filter" width="25" height="25"/>
+    </resources>
 </document>
