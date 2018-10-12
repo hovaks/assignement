@@ -70,8 +70,8 @@ class NetworkController {
 		}
 		urlString += "?q={\"name\": {\"$regex\" : \"\(regex)\"}}"
 
-		let filterString = ", {\"$or\": [{\"category\": {\"name\":\"Books\"}}, {\"category\": {\"name\":\"Music\"}}]}}"
-		urlString += filterString
+		//let filterString = ", {\"$or\": [{\"category\": {\"name\":\"Books\"}}, {\"category\": {\"name\":\"Music\"}}]}}"
+		//urlString += filterString
 		
 		if sort != .none {
 			urlString += "&sort=\(sort.rawValue)"
