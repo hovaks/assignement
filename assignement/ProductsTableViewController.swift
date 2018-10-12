@@ -9,7 +9,11 @@
 import UIKit
 
 class ProductsTableViewController: UITableViewController {
-	
+	var sortValue: Sort = .none {
+		didSet {
+			print(sortValue)
+		}
+	}
 	var filters = [String]() {
 		didSet {
 			print(filters)
@@ -73,7 +77,7 @@ class ProductsTableViewController: UITableViewController {
 	// MARK: - Navigation
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		//segue for the popover configuration window
-		if segue.identifier == "PopOver" {
+		if segue.identifier == "FilterPopover" {
 			if let controller = segue.destination as? FilterPopoverTableViewController {
 				let width = self.view.bounds.width
 				let height = self.view.bounds.height - self.view.bounds.height / 5
@@ -81,6 +85,16 @@ class ProductsTableViewController: UITableViewController {
 				controller.preferredContentSize = CGSize(width: width, height: height)
 				controller.filters = filters
 				controller.networkController = networkController
+			}
+		}
+		
+		if segue.identifier == "SortPopover" {
+			if let controller = segue.destination as? SortPopoverTableViewController {
+				let width = self.view.bounds.width
+				let height = CGFloat(44 * 3)
+				controller.popoverPresentationController!.delegate = self
+				controller.preferredContentSize = CGSize(width: width, height: height)
+				controller.sortValue = sortValue
 			}
 		}
 	}
@@ -121,6 +135,9 @@ extension ProductsTableViewController: UIPopoverPresentationControllerDelegate {
 	func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) {
 		if let sender = popoverPresentationController.presentedViewController as? FilterPopoverTableViewController {
 			filters = sender.filters
+		}
+		if let sender = popoverPresentationController.presentedViewController as? SortPopoverTableViewController {
+			sortValue = sender.sortValue
 		}
 	}
 }

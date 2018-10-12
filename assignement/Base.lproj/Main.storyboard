@@ -92,17 +92,25 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="KUL-dI-o8Q">
-                        <barButtonItem key="leftBarButtonItem" title="Logout" id="EhA-gJ-d77"/>
+                        <barButtonItem key="leftBarButtonItem" title="Logout" id="EhA-gJ-d77">
+                            <color key="tintColor" red="1" green="0.0" blue="0.023286350454940319" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </barButtonItem>
                         <rightBarButtonItems>
                             <barButtonItem systemItem="search" id="pZd-iJ-VMG">
                                 <connections>
                                     <action selector="searchButtonTapped:" destination="hva-Sp-w72" id="tm8-TB-n6D"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="Sort" id="1gF-NG-KMr"/>
+                            <barButtonItem title="Sort" image="sort" id="1gF-NG-KMr">
+                                <connections>
+                                    <segue destination="huC-Rh-GQV" kind="popoverPresentation" identifier="SortPopover" popoverAnchorBarButtonItem="1gF-NG-KMr" id="VlU-Na-pQC">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
+                                </connections>
+                            </barButtonItem>
                             <barButtonItem title="Item" image="filter" id="SVa-W0-fnn">
                                 <connections>
-                                    <segue destination="GPF-0k-TzA" kind="popoverPresentation" identifier="PopOver" popoverAnchorBarButtonItem="SVa-W0-fnn" id="RKs-Ie-UFA">
+                                    <segue destination="GPF-0k-TzA" kind="popoverPresentation" identifier="FilterPopover" popoverAnchorBarButtonItem="SVa-W0-fnn" id="RKs-Ie-UFA">
                                         <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                                     </segue>
                                 </connections>
@@ -167,10 +175,49 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="16R-XW-YLJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1774" y="-564"/>
+            <point key="canvasLocation" x="1807" y="-63"/>
+        </scene>
+        <!--Sort Popover Table View Controller-->
+        <scene sceneID="usg-ws-UtU">
+            <objects>
+                <tableViewController id="huC-Rh-GQV" customClass="SortPopoverTableViewController" customModule="assignement" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="fFX-uM-B5b">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="SortCell" textLabel="ZhD-qv-3NW" style="IBUITableViewCellStyleDefault" id="nNe-zt-PvK">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nNe-zt-PvK" id="ftt-bV-0sc">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="value" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZhD-qv-3NW">
+                                            <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <sections/>
+                        <connections>
+                            <outlet property="dataSource" destination="huC-Rh-GQV" id="ZEr-k1-UAS"/>
+                            <outlet property="delegate" destination="huC-Rh-GQV" id="wnB-nK-tVh"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6mj-pt-5Jm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1806" y="-819"/>
         </scene>
     </scenes>
     <resources>
         <image name="filter" width="25" height="25"/>
+        <image name="sort" width="25" height="25"/>
     </resources>
 </document>
