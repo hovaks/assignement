@@ -11,16 +11,26 @@ import UIKit
 class LoginViewController: UIViewController {
 	@IBOutlet weak var emailTextField: UITextField!
 	@IBOutlet weak var passwordTextField: UITextField!
+	@IBOutlet weak var loginContainer: UIView!
 	
 	var networkController: NetworkController?
 	let defaults = UserDefaults.standard
+	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		if let _ = defaults.object(forKey: "accessToken") as? String {
+			loginContainer.isHidden = true
+		}
+	}
 	
 	func presentProducts() {
 		if let _ = defaults.object(forKey: "accessToken") as? String {
 			if let productsVC = storyboard?.instantiateViewController(withIdentifier: "ProductsVC") as? UINavigationController {
 				emailTextField.text = nil
 				passwordTextField.text = nil
-				present(productsVC, animated: false)
+				present(productsVC, animated: false) {
+					self.loginContainer.isHidden = false
+				}
 			}
 		}
 	}
@@ -40,7 +50,9 @@ class LoginViewController: UIViewController {
 				return
 		}
 		
-		networkController?.authroize(withEmail: email, password: password) {
+		networkController?.authroize(
+		withEmail: email,
+		password: password) {
 			self.networkController = nil
 			self.presentProducts()
 		}

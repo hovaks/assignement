@@ -9,14 +9,19 @@
 import UIKit
 
 class ProductsTableViewController: UITableViewController {
-	var sortValue: Sort = .none {
+	var searchValue: String = "" {
 		didSet {
-			print(sortValue)
+			loadProducts()
 		}
 	}
-	var filters = [String]() {
+	var sortValue: Sort = .none {
 		didSet {
-			print(filters)
+			loadProducts()
+		}
+	}
+	var filters = [Int]() {
+		didSet {
+			loadProducts()
 		}
 	}
 	var products = [Product]() {
@@ -34,11 +39,7 @@ class ProductsTableViewController: UITableViewController {
 		
 		let token = UserDefaults.standard.value(forKey: "accessToken") as? String
 		networkController = NetworkController(withToken: token)
-		networkController?.loadProducts(query: "", filters: filters, sortBy: sortValue) { results in 
-			if let results = results {
-				self.products = results
-			}
-		}
+		loadProducts()
 		tableView.rowHeight = 100
 		
 		//Configure SearchBar
@@ -58,6 +59,18 @@ class ProductsTableViewController: UITableViewController {
 	
 	@IBAction func searchButtonTapped(_ sender: UIBarButtonItem) {
 		navigationItem.searchController?.isActive = true
+	}
+	
+	private func loadProducts() {
+		networkController?.loadProducts(
+			query: searchValue,
+			filters: filters,
+			sortBy: sortValue) { results in
+				if let results = results {
+					self.searchInProgress = false
+					self.products = results
+				}
+		}
 	}
 	
 	// MARK: - Table view data source
@@ -109,24 +122,16 @@ extension ProductsTableViewController: UISearchResultsUpdating, UISearchBarDeleg
 		let searchBar = searchController.searchBar
 		if let query = searchBar.text {
 			if !searchInProgress && query.count > 2 {
+				searchValue = query
 				searchInProgress = true
-				networkController?.loadProducts(query: query, filters: nil, sortBy: .none) { results in
-					if let results = results {
-						self.searchInProgress = false
-						self.products = results
-					}
-				}
+				loadProducts()
 			}
 		}
 	}
 	
 	func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-		networkController?.loadProducts(query: "", filters: nil, sortBy: .none) { results in
-			if let results = results {
-				self.searchInProgress = false
-				self.products = results
-			}
-		}
+		searchValue = ""
+		loadProducts()
 	}
 }
 

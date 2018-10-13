@@ -216,6 +216,7 @@
                     <navigationItem key="navigationItem" title="Please Log In" id="JWv-2c-Grd"/>
                     <connections>
                         <outlet property="emailTextField" destination="dQP-ut-fU0" id="VIv-48-RAN"/>
+                        <outlet property="loginContainer" destination="DMN-py-VjJ" id="Sj0-fj-2eq"/>
                         <outlet property="passwordTextField" destination="zj6-gv-kHT" id="0Jc-Cp-lCJ"/>
                     </connections>
                 </viewController>

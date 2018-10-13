@@ -16,7 +16,7 @@ class FilterPopoverTableViewController: UITableViewController {
 		}
 	}
 	
-	var filters = [String]()
+	var filters = [Int]()
 	
 	var networkController: NetworkController?
 
@@ -37,11 +37,9 @@ class FilterPopoverTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-
-		let catigoryName = categories[indexPath.row].name
-        cell.textLabel?.text = catigoryName
+        cell.textLabel?.text = categories[indexPath.row].name
 		
-		if filters.contains(catigoryName) {
+		if filters.contains(categories[indexPath.row].id) {
 			cell.accessoryType = .checkmark
 		}
 		
@@ -50,12 +48,12 @@ class FilterPopoverTableViewController: UITableViewController {
     }
 	
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		filters.append(categories[indexPath.row].name)
+		filters.append(categories[indexPath.row].id)
 		tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
 	}
 	
 	override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-		filters.removeAll { $0 == categories[indexPath.row].name }
+		filters.removeAll { $0 == categories[indexPath.row].id }
 		tableView.cellForRow(at: indexPath)?.accessoryType = .none
 	}
 }

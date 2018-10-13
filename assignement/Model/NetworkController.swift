@@ -21,9 +21,14 @@ class NetworkController {
 	}
 	
 	private let baseURL = "http://142.93.143.76"
-	var currentTask: URLSessionTask?
 	
-	func authroize(withEmail email: String, password: String, completion: @escaping ()->()) {
+	//Authorize
+	func authroize(
+		withEmail email: String,
+		password: String,
+		completion: @escaping ()->()) {
+		
+		//Create Payload
 		let urlString = baseURL + "/auth/login"
 		guard let url = URL(string: urlString) else {
 			return
@@ -36,6 +41,7 @@ class NetworkController {
 		
 		let jsonData = try? JSONSerialization.data(withJSONObject: json)
 		
+		//Create Connection
 		let configuration = URLSessionConfiguration.ephemeral
 		configuration.waitsForConnectivity = true
 		
@@ -46,8 +52,13 @@ class NetworkController {
 		request.allHTTPHeaderFields = headers
 		request.httpBody = jsonData
 		
-		let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
-		let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+		let session = URLSession(
+			configuration: configuration,
+			delegate: nil,
+			delegateQueue: OperationQueue.main)
+		let dataTask = session.dataTask(
+			with: request as URLRequest,
+			completionHandler: { (data, response, error) -> Void in
 			if (error != nil) {
 				print(error as Any)
 			} else {
@@ -75,11 +86,12 @@ class NetworkController {
 		})
 		
 		dataTask.resume()
-		
-		
 	}
 	
-	func loadCategories(completion: @escaping ([Category]?) -> Void) {
+	//Get Categories
+	func loadCategories(
+		completion: @escaping ([Category]?) -> Void)
+	{
 		let urlString = baseURL + "/categories"
 		guard let url = URL(string: urlString) else {
 			completion(nil)
@@ -95,10 +107,13 @@ class NetworkController {
 		request.httpMethod = "GET"
 		request.allHTTPHeaderFields = headers
 		
-				print(headers)
-		
-		let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
-		let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+		let session = URLSession(
+			configuration: configuration,
+			delegate: nil,
+			delegateQueue: OperationQueue.main)
+		let dataTask = session.dataTask(
+			with: request as URLRequest,
+			completionHandler: { (data, response, error) -> Void in
 			if (error != nil) {
 				print(error as Any)
 			} else {
@@ -109,7 +124,6 @@ class NetworkController {
 						let decoder = JSONDecoder()
 						decoder.keyDecodingStrategy = .convertFromSnakeCase
 						let categories = try decoder.decode([Category].self, from: data)
-						print(categories)
 						completion(categories)
 					} catch let error {
 						print(error)
@@ -122,20 +136,28 @@ class NetworkController {
 		dataTask.resume()
 	}
 	
-	
-	func loadProducts(query: String, filters: [String]?, sortBy sort: Sort, completion: @escaping ([Product]?) -> Void) {
+	//Get Products
+	func loadProducts(
+		query: String,
+		filters: [Int],
+		sortBy sort: Sort,
+		completion: @escaping ([Product]?) -> Void)
+	{
+		//Construct URL
+		var urlString = baseURL + "/products?search=\(query)"
 		
-		var urlString = baseURL + "/products"
-		//urlString += "?q={\"name\": {\"$regex\" : \"\(regex)\"}}"
-		
-		//let filterString = ", {\"$or\": [{\"category\": {\"name\":\"Books\"}}, {\"category\": {\"name\":\"Music\"}}]}}"
-		//urlString += filterString
-		
-		if sort != .none {
-			urlString += "&sort=\(sort.rawValue)"
+		if !filters.isEmpty {
+			urlString += "&category="
+			for filter in filters {
+				urlString += "\(filter),"
+			}
 		}
 		
+		if sort != .none {
+			urlString += "&order=\(sort.rawValue)"
+		}
 		
+		//Get Data
 		guard let encodedURLString = urlString.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed),
 			let url = URL(string: encodedURLString) else {
 				completion(nil)
@@ -151,8 +173,13 @@ class NetworkController {
 		request.httpMethod = "GET"
 		request.allHTTPHeaderFields = headers
 		
-		let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
-		let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
+		let session = URLSession(
+			configuration: configuration,
+			delegate: nil,
+			delegateQueue: OperationQueue.main)
+		let dataTask = session.dataTask(
+			with: request as URLRequest,
+			completionHandler: { (data, response, error) -> Void in
 			if (error != nil) {
 				print(error as Any)
 			} else {

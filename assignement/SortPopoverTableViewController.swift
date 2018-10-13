@@ -17,7 +17,9 @@ class SortPopoverTableViewController: UITableViewController {
 	}
 	
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCell(withIdentifier: "SortCell", for: indexPath)
+		let cell = tableView.dequeueReusableCell(
+			withIdentifier: "SortCell",
+			for: indexPath)
 		cell.textLabel?.text = values[indexPath.row].capitalized
 		
 		if values[indexPath.row] == sortValue.rawValue {
@@ -36,6 +38,10 @@ class SortPopoverTableViewController: UITableViewController {
 		if let cell = tableView.cellForRow(at: indexPath) {
 			cell.accessoryType = .checkmark
 			sortValue = Sort(rawValue: (values[indexPath.row]))
+			if let popover = popoverPresentationController {
+				popover.delegate?.popoverPresentationControllerDidDismissPopover!(popover)
+			}
+			self.dismiss(animated: true)
 		}
 	}
 }
