@@ -30,7 +30,6 @@
 		16177044216FB534009DD73C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		16177047216FB534009DD73C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		16177049216FB534009DD73C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1617704F216FB64B009DD73C /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = SOURCE_ROOT; };
 		166600FD216FFCB400D529CC /* Product.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
 		166600FF216FFD9800D529CC /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		1666010321704A7600D529CC /* NetworkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkController.swift; sourceTree = "<group>"; };
@@ -79,7 +78,6 @@
 				16177044216FB534009DD73C /* Assets.xcassets */,
 				16177046216FB534009DD73C /* LaunchScreen.storyboard */,
 				16177049216FB534009DD73C /* Info.plist */,
-				1617704F216FB64B009DD73C /* .gitignore */,
 				1666010521709EC400D529CC /* ProductsTableViewController.swift */,
 				166601072170A1A100D529CC /* ProductTableViewCell.swift */,
 				16B51E1B2171052600CF03D4 /* SortPopoverTableViewController.swift */,
