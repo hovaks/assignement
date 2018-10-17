@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-enum Sort: String {
+enum Sort: String, CaseIterable {
 	case none = "none"
 	case name = "name"
 	case price = "price"

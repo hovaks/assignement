@@ -10,25 +10,9 @@ import UIKit
 
 class FilterPopoverTableViewController: UITableViewController {
 	
-	var categories = [Category]() {
-		didSet {
-			tableView.reloadData()
-		}
-	}
+	var categories: [Category]!
 	
 	var filters = [Int]()
-	
-	var networkController: NetworkController?
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-		
-		networkController?.loadCategories { results in
-			if let results = results {
-				self.categories = results
-			}
-		}
-    }
 
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -43,7 +27,6 @@ class FilterPopoverTableViewController: UITableViewController {
 			cell.accessoryType = .checkmark
 		}
 		
-
         return cell
     }
 	

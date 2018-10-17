@@ -52,9 +52,26 @@ class LoginViewController: UIViewController {
 		
 		networkController?.authroize(
 		withEmail: email,
-		password: password) {
-			self.networkController = nil
-			self.presentProducts()
+		password: password) { statusCode in
+			guard let statusCode = statusCode else { return }
+			switch statusCode {
+			case 200:
+				self.networkController = nil
+				self.presentProducts()
+			case 401, 422:
+				//Show Alert
+				let alert = UIAlertController(title: "Login Failed",
+											  message: "The email or password is incorrect.",
+											  preferredStyle: UIAlertControllerStyle.alert)
+				alert.addAction(
+					UIAlertAction(title: "OK", style: .default) { _ in
+					self.emailTextField.text = nil
+					self.passwordTextField.text = nil
+				})
+				self.present(alert, animated: true, completion: nil)
+			default:
+				print("otherError")
+			}
 		}
 	}
 }

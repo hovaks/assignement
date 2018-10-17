@@ -29,30 +29,37 @@ class ProductsTableViewController: UITableViewController {
 			tableView.reloadData()
 		}
 	}
-	var searchInProgress = false
 	
+	var categories = [Category]()
+	
+	
+	var searchInProgress = false
+	let defaults = UserDefaults.standard
 	var networkController: NetworkController?
 	var searchController: UISearchController!
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		let token = UserDefaults.standard.value(forKey: "accessToken") as? String
-		networkController = NetworkController(withToken: token)
-		loadProducts()
 		tableView.rowHeight = 100
+		
+		//Get Token and Set Network Controller
+		let token = defaults.value(forKey: "accessToken") as? String
+		networkController = NetworkController(withToken: token)
+		
+		loadProducts()
 		
 		//Configure SearchBar
 		searchController = UISearchController(searchResultsController: nil)
 		searchController.searchResultsUpdater = self
 		searchController.searchBar.delegate = self
+		searchController.delegate = self
 		searchController.searchBar.placeholder = "Search Products"
 		searchController.dimsBackgroundDuringPresentation = false
 		navigationItem.searchController = searchController
 		definesPresentationContext = true
 	}
 	@IBAction func logoutButtonTapped(_ sender: UIBarButtonItem) {
-		let defaults = UserDefaults.standard
 		defaults.set(nil, forKey: "accessToken")
 		self.dismiss(animated: false)
 	}
@@ -70,6 +77,12 @@ class ProductsTableViewController: UITableViewController {
 					self.searchInProgress = false
 					self.products = results
 				}
+		}
+		
+		networkController?.loadCategories { results in
+			if let results = results {
+				self.categories = results
+			}
 		}
 	}
 	
@@ -93,22 +106,28 @@ class ProductsTableViewController: UITableViewController {
 	
 	// MARK: - Navigation
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		
+		//Default Row Size
+		let rowSize = 44
+		
 		//segue for the popover configuration window
 		if segue.identifier == "FilterPopover" {
-			if let controller = segue.destination as? FilterPopoverTableViewController {
-				let width = self.view.bounds.width
-				let height = self.view.bounds.height - self.view.bounds.height / 5
-				controller.popoverPresentationController!.delegate = self
-				controller.preferredContentSize = CGSize(width: width, height: height)
-				controller.filters = filters
-				controller.networkController = networkController
+			if !categories.isEmpty {
+				if let controller = segue.destination as? FilterPopoverTableViewController {
+					let width = self.view.bounds.width
+					let height = CGFloat(categories.count * rowSize)
+					controller.popoverPresentationController!.delegate = self
+					controller.preferredContentSize = CGSize(width: width, height: height)
+					controller.filters = filters
+					controller.categories = categories
+				}
 			}
 		}
 		
 		if segue.identifier == "SortPopover" {
 			if let controller = segue.destination as? SortPopoverTableViewController {
 				let width = self.view.bounds.width
-				let height = CGFloat(44 * 3)
+				let height = CGFloat(Sort.allCases.count * rowSize)
 				controller.popoverPresentationController!.delegate = self
 				controller.preferredContentSize = CGSize(width: width, height: height)
 				controller.sortValue = sortValue
@@ -117,7 +136,14 @@ class ProductsTableViewController: UITableViewController {
 	}
 }
 
-extension ProductsTableViewController: UISearchResultsUpdating, UISearchBarDelegate {
+extension ProductsTableViewController: UISearchResultsUpdating, UISearchBarDelegate, UISearchControllerDelegate {
+	
+	func didPresentSearchController(_ searchController: UISearchController) {
+		DispatchQueue.main.async {
+			searchController.searchBar.becomeFirstResponder()
+		}
+	}
+	
 	func updateSearchResults(for searchController: UISearchController) {
 		let searchBar = searchController.searchBar
 		if let query = searchBar.text {

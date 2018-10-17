@@ -7,11 +7,14 @@
 //
 
 import UIKit
+import Alamofire
 
 class NetworkController {
 	
 	var accessToken: String?
+	
 	var headers = ["content-type": "application/json"]
+	private let baseURL = "http://142.93.143.76"
 	
 	init(withToken token: String? = nil) {
 		if let token = token {
@@ -20,13 +23,11 @@ class NetworkController {
 		}
 	}
 	
-	private let baseURL = "http://142.93.143.76"
-	
 	//Authorize
 	func authroize(
 		withEmail email: String,
 		password: String,
-		completion: @escaping ()->()) {
+		completion: @escaping (Int?) -> Void) {
 		
 		//Create Payload
 		let urlString = baseURL + "/auth/login"
@@ -34,58 +35,39 @@ class NetworkController {
 			return
 		}
 		
-		let json: [String: Any] = [
+		let parameters: [String: Any] = [
 			"username": email,
 			"password": password
 		]
 		
-		let jsonData = try? JSONSerialization.data(withJSONObject: json)
-		
 		//Create Connection
-		let configuration = URLSessionConfiguration.ephemeral
-		configuration.waitsForConnectivity = true
-		
-		let request = NSMutableURLRequest(url: url,
-										  cachePolicy: .useProtocolCachePolicy,
-										  timeoutInterval: 10.0)
-		request.httpMethod = "POST"
-		request.allHTTPHeaderFields = headers
-		request.httpBody = jsonData
-		
-		let session = URLSession(
-			configuration: configuration,
-			delegate: nil,
-			delegateQueue: OperationQueue.main)
-		let dataTask = session.dataTask(
-			with: request as URLRequest,
-			completionHandler: { (data, response, error) -> Void in
-			if (error != nil) {
-				print(error as Any)
-			} else {
-				guard let httpResponse = response as? HTTPURLResponse else { return }
-				switch httpResponse.statusCode {
-				case 200:
-					guard let data = data else { return }
+		Alamofire.request(url,
+						  method: .post,
+						  parameters: parameters,
+						  encoding: JSONEncoding.default,
+						  headers: headers)
+			.responseData { response in
+				switch response.result {
+				case .success:
+					guard
+						let data = response.data,
+						let statusCode = response.response?.statusCode
+						else { return completion(nil) }
 					do {
 						let decoder = JSONDecoder()
 						decoder.keyDecodingStrategy = .convertFromSnakeCase
+						
+						//Serialize Token
 						let token = try decoder.decode(AccessToken.self, from: data)
-						let defaults = UserDefaults.standard
-						defaults.set(token.accessToken, forKey: "accessToken")
-						completion()
-					} catch let error {
-						print(error)
+						UserDefaults.standard.set(token.accessToken, forKey: "accessToken")
+						return completion(statusCode)
+					} catch {
+						return completion(statusCode)
 					}
-				case 401, 422:
-					print("Login Failed")
-				default:
-					print("Other Error")
+				case .failure:
+					return completion(nil)
 				}
-			}
-			session.finishTasksAndInvalidate()
-		})
-		
-		dataTask.resume()
+		}
 	}
 	
 	//Get Categories
@@ -98,42 +80,31 @@ class NetworkController {
 			return
 		}
 		
-		let configuration = URLSessionConfiguration.ephemeral
-		configuration.waitsForConnectivity = true
-		
-		let request = NSMutableURLRequest(url: url,
-										  cachePolicy: .useProtocolCachePolicy,
-										  timeoutInterval: 10.0)
-		request.httpMethod = "GET"
-		request.allHTTPHeaderFields = headers
-		
-		let session = URLSession(
-			configuration: configuration,
-			delegate: nil,
-			delegateQueue: OperationQueue.main)
-		let dataTask = session.dataTask(
-			with: request as URLRequest,
-			completionHandler: { (data, response, error) -> Void in
-			if (error != nil) {
-				print(error as Any)
-			} else {
-				guard let httpResponse = response as? HTTPURLResponse else { return }
-				if httpResponse.statusCode == 200 {
-					guard let data = data else { return }
+		Alamofire.request(url,
+						  method: .get,
+						  parameters: nil,
+						  encoding: JSONEncoding.default,
+						  headers: headers)
+			.responseData { response in
+				switch response.result {
+				case .success:
+					guard
+						let data = response.data
+						else { return completion(nil) }
 					do {
+						//Serialize Products
 						let decoder = JSONDecoder()
 						decoder.keyDecodingStrategy = .convertFromSnakeCase
 						let categories = try decoder.decode([Category].self, from: data)
-						completion(categories)
-					} catch let error {
-						print(error)
+						return completion(categories)
+					} catch {
+						return completion(nil)
 					}
+					
+				case.failure:
+					return completion(nil)
 				}
-			}
-			session.finishTasksAndInvalidate()
-		})
-		
-		dataTask.resume()
+		}
 	}
 	
 	//Get Products
@@ -143,6 +114,45 @@ class NetworkController {
 		sortBy sort: Sort,
 		completion: @escaping ([Product]?) -> Void)
 	{
+		
+		guard
+			let url = generateURL(query: query,
+								  filters: filters,
+								  sort: sort)
+			else {
+				return completion(nil)
+		}
+		
+		Alamofire.request(url,
+						  method: .get,
+						  parameters: nil,
+						  encoding: JSONEncoding.default,
+						  headers: headers)
+			.responseData { response in
+				switch response.result {
+				case .success:
+					guard
+						let data = response.data
+						else { return completion(nil) }
+					do {
+						//Serialize Products
+						let decoder = JSONDecoder()
+						decoder.keyDecodingStrategy = .convertFromSnakeCase
+						let products = try decoder.decode([Product].self, from: data)
+						completion(products)
+					} catch{
+						return completion(nil)
+					}
+				case.failure:
+					return completion(nil)
+				}
+		}
+	}
+	
+	//Private Helper Functions
+	private func generateURL(query: String,
+							 filters: [Int],
+							 sort: Sort) -> URL? {
 		//Construct URL
 		var urlString = baseURL + "/products?search=\(query)"
 		
@@ -157,48 +167,14 @@ class NetworkController {
 			urlString += "&order=\(sort.rawValue)"
 		}
 		
-		//Get Data
-		guard let encodedURLString = urlString.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed),
-			let url = URL(string: encodedURLString) else {
-				completion(nil)
-				return
+		//Encode URL
+		guard
+			let encodedURLString = urlString.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed),
+			let url = URL(string: encodedURLString)
+			else {
+				return nil
 		}
 		
-		let configuration = URLSessionConfiguration.ephemeral
-		configuration.waitsForConnectivity = true
-		
-		let request = NSMutableURLRequest(url: url,
-										  cachePolicy: .useProtocolCachePolicy,
-										  timeoutInterval: 10.0)
-		request.httpMethod = "GET"
-		request.allHTTPHeaderFields = headers
-		
-		let session = URLSession(
-			configuration: configuration,
-			delegate: nil,
-			delegateQueue: OperationQueue.main)
-		let dataTask = session.dataTask(
-			with: request as URLRequest,
-			completionHandler: { (data, response, error) -> Void in
-			if (error != nil) {
-				print(error as Any)
-			} else {
-				guard let httpResponse = response as? HTTPURLResponse else { return }
-				if httpResponse.statusCode == 200 {
-					guard let data = data else { return }
-					do {
-						let decoder = JSONDecoder()
-						decoder.keyDecodingStrategy = .convertFromSnakeCase
-						let products = try decoder.decode([Product].self, from: data)
-						completion(products)
-					} catch let error {
-						print(error)
-					}
-				}
-			}
-			session.finishTasksAndInvalidate()
-		})
-		
-		dataTask.resume()
+		return url
 	}
 }
