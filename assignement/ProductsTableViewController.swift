@@ -11,19 +11,28 @@ import UIKit
 class ProductsTableViewController: UITableViewController {
 	var searchValue: String = "" {
 		didSet {
+			if searchValue.isEmpty {
+				searchInProgress = false
+			} else {
+				searchInProgress = true
+			}
+			
 			loadProducts()
 		}
 	}
+	
 	var sortValue: Sort = .none {
 		didSet {
 			loadProducts()
 		}
 	}
+	
 	var filters = [Int]() {
 		didSet {
 			loadProducts()
 		}
 	}
+	
 	var products = [Product]() {
 		didSet {
 			tableView.reloadData()
@@ -32,10 +41,9 @@ class ProductsTableViewController: UITableViewController {
 	
 	var categories = [Category]()
 	
-	
-	var searchInProgress = false
 	let defaults = UserDefaults.standard
 	var networkController: NetworkController?
+	var searchInProgress = false
 	var searchController: UISearchController!
 	
 	override func viewDidLoad() {
@@ -74,7 +82,6 @@ class ProductsTableViewController: UITableViewController {
 			filters: filters,
 			sortBy: sortValue) { results in
 				if let results = results {
-					self.searchInProgress = false
 					self.products = results
 				}
 		}
@@ -147,17 +154,10 @@ extension ProductsTableViewController: UISearchResultsUpdating, UISearchBarDeleg
 	func updateSearchResults(for searchController: UISearchController) {
 		let searchBar = searchController.searchBar
 		if let query = searchBar.text {
-			if !searchInProgress && query.count > 2 {
+			if (!searchInProgress && query.count > 2) || query.isEmpty {
 				searchValue = query
-				searchInProgress = true
-				loadProducts()
 			}
 		}
-	}
-	
-	func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-		searchValue = ""
-		loadProducts()
 	}
 }
 

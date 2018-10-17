@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ProductTableViewCell: UITableViewCell {
 	@IBOutlet weak var productImageView: UIImageView!
@@ -44,8 +45,9 @@ class ProductTableViewCell: UITableViewCell {
 		
 		var baseURLString = "http://142.93.143.76"
 		baseURLString += "/images/\(product.image)"
-		
-		self.productImageView?.imageFromServerURL(baseURLString)
+		guard let url = URL(string: baseURLString) else { return }
+		productImageView.kf.indicatorType = .activity
+		productImageView.kf.setImage(with: url)
 		nameLabel.text = product.name
 		categoryLabel.text = product.category.name
 		priceLabel.text = "\(product.price)$"
